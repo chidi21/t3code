@@ -51,3 +51,15 @@ Docs:
 - Codex-Monitor (Tauri, feature-complete, strong reference implementation): https://github.com/Dimillian/CodexMonitor
 
 Use these as implementation references when designing protocol handling, UX flows, and operational safeguards.
+
+## Local Development Setup (Windows)
+
+Prerequisites: Node 24+ (via `fnm`), Bun 1.3.9+, Python 3.10+, VS 2022 Build Tools.
+
+- `bun install` — install dependencies (ensure `electron` is in `trustedDependencies`)
+- `bun run dev` — start dev server (web + server)
+- `bun run dev:desktop` — start desktop (Electron) dev mode
+- `bun run build` — build all packages
+- `bun run dist:desktop:win` — build Windows NSIS installer to `release/`
+
+See `docs/windows-local-build.md` for the full Windows build guide, including known `node-pty` native rebuild issues and fixes.
