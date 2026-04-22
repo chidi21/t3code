@@ -4,12 +4,12 @@ Guide for producing a local (unsigned) Windows NSIS installer from a development
 
 ## Prerequisites
 
-| Tool | Required Version | Check |
-|------|-----------------|-------|
-| Node.js | ^24.13.1 | `node --version` |
-| Bun | ^1.3.9 | `bun --version` |
-| Python | 3.10+ | `python --version` |
-| Visual Studio 2022 Build Tools | MSVC v143 | `ls "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools"` |
+| Tool                           | Required Version | Check                                                                 |
+| ------------------------------ | ---------------- | --------------------------------------------------------------------- |
+| Node.js                        | ^24.13.1         | `node --version`                                                      |
+| Bun                            | ^1.3.9           | `bun --version`                                                       |
+| Python                         | 3.10+            | `python --version`                                                    |
+| Visual Studio 2022 Build Tools | MSVC v143        | `ls "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools"` |
 
 ### Node version management
 
@@ -45,6 +45,7 @@ Bun skips lifecycle scripts for packages not listed in `trustedDependencies`. Th
 ```
 
 If `electron` is missing from this list, the desktop app will fail at runtime with:
+
 ```
 Error: Electron failed to install correctly, please delete node_modules/electron and try installing again
 ```
@@ -68,12 +69,12 @@ This runs `scripts/build-desktop-artifact.ts --platform win --target nsis --arch
 
 ### Useful flags
 
-| Flag | Purpose |
-|------|---------|
-| `--verbose` | Stream full subprocess output (recommended for debugging) |
-| `--skip-build` | Skip `bun run build:desktop`, reuse existing `dist/` artifacts |
-| `--keep-stage` | Keep the temp staging directory after build (useful for debugging) |
-| `--build-version X.Y.Z` | Override the version number in the installer |
+| Flag                    | Purpose                                                            |
+| ----------------------- | ------------------------------------------------------------------ |
+| `--verbose`             | Stream full subprocess output (recommended for debugging)          |
+| `--skip-build`          | Skip `bun run build:desktop`, reuse existing `dist/` artifacts     |
+| `--keep-stage`          | Keep the temp staging directory after build (useful for debugging) |
+| `--build-version X.Y.Z` | Override the version number in the installer                       |
 
 Example with all debug flags:
 
