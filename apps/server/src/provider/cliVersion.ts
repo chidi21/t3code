@@ -1,15 +1,13 @@
-const CODEX_VERSION_PATTERN = /\bv?(\d+\.\d+(?:\.\d+)?(?:-[0-9A-Za-z.-]+)?)\b/;
-
-export const MINIMUM_CODEX_CLI_VERSION = "0.37.0";
-
-interface ParsedSemver {
+interface ParsedCliSemver {
   readonly major: number;
   readonly minor: number;
   readonly patch: number;
   readonly prerelease: ReadonlyArray<string>;
 }
 
-function normalizeCodexVersion(version: string): string {
+const CLI_VERSION_NUMBER_SEGMENT = /^\d+$/;
+
+export function normalizeCliVersion(version: string): string {
   const [main, prerelease] = version.trim().split("-", 2);
   const segments = (main ?? "")
     .split(".")
@@ -23,8 +21,8 @@ function normalizeCodexVersion(version: string): string {
   return prerelease ? `${segments.join(".")}-${prerelease}` : segments.join(".");
 }
 
-function parseSemver(version: string): ParsedSemver | null {
-  const normalized = normalizeCodexVersion(version);
+function parseCliSemver(version: string): ParsedCliSemver | null {
+  const normalized = normalizeCliVersion(version);
   const [main = "", prerelease] = normalized.split("-", 2);
   const segments = main.split(".");
   if (segments.length !== 3) {
@@ -33,6 +31,13 @@ function parseSemver(version: string): ParsedSemver | null {
 
   const [majorSegment, minorSegment, patchSegment] = segments;
   if (majorSegment === undefined || minorSegment === undefined || patchSegment === undefined) {
+    return null;
+  }
+  if (
+    !CLI_VERSION_NUMBER_SEGMENT.test(majorSegment) ||
+    !CLI_VERSION_NUMBER_SEGMENT.test(minorSegment) ||
+    !CLI_VERSION_NUMBER_SEGMENT.test(patchSegment)
+  ) {
     return null;
   }
 
@@ -71,9 +76,9 @@ function comparePrereleaseIdentifier(left: string, right: string): number {
   return left.localeCompare(right);
 }
 
-export function compareCodexCliVersions(left: string, right: string): number {
-  const parsedLeft = parseSemver(left);
-  const parsedRight = parseSemver(right);
+export function compareCliVersions(left: string, right: string): number {
+  const parsedLeft = parseCliSemver(left);
+  const parsedRight = parseCliSemver(right);
   if (!parsedLeft || !parsedRight) {
     return left.localeCompare(right);
   }
@@ -115,27 +120,4 @@ export function compareCodexCliVersions(left: string, right: string): number {
   }
 
   return 0;
-}
-
-export function parseCodexCliVersion(output: string): string | null {
-  const match = CODEX_VERSION_PATTERN.exec(output);
-  if (!match?.[1]) {
-    return null;
-  }
-
-  const parsed = parseSemver(match[1]);
-  if (!parsed) {
-    return null;
-  }
-
-  return normalizeCodexVersion(match[1]);
-}
-
-export function isCodexCliVersionSupported(version: string): boolean {
-  return compareCodexCliVersions(version, MINIMUM_CODEX_CLI_VERSION) >= 0;
-}
-
-export function formatCodexCliUpgradeMessage(version: string | null): string {
-  const versionLabel = version ? `v${version}` : "the installed version";
-  return `Codex CLI ${versionLabel} is too old for T3 Code. Upgrade to v${MINIMUM_CODEX_CLI_VERSION} or newer and restart T3 Code.`;
 }
